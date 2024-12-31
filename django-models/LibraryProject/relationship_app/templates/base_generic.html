@@ -1,0 +1,31 @@
+<!-- templates/base_generic.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}عنوان الصفحة{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
+                <li><a href="{% url 'login' %}">تسجيل الدخول</a></li>
+                <li><a href="{% url 'register' %}">التسجيل</a></li>
+                <li><a href="{% url 'logout' %}">تسجيل الخروج</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- محتوى الصفحة سيظهر هنا -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2024 - جميع الحقوق محفوظة.</p>
+    </footer>
+</body>
+</html>
