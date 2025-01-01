@@ -1,0 +1,7 @@
+<!-- templates/registration/logged_out.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>تم تسجيل الخروج بنجاح</h2>
+  <p>تم تسجيل الخروج من الحساب. يمكنك الآن <a href="{% url 'login' %}">تسجيل الدخول مرة أخرى</a>.</p>
+{% endblock %}
