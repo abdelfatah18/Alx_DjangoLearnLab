@@ -1,0 +1,14 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <div class="home-welcome">
+      <h2>Welcome to the Home Page</h2>
+      <p>You're successfully logged in!</p>
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+  {% else %}
+    <p>You need to log in to access the home page.</p>
+    <a href="{% url 'login' %}">Login</a>
+  {% endif %}
+{% endblock %}
