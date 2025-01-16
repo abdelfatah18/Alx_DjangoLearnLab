@@ -1,6 +1,7 @@
 from django.urls import path, include  # ✅ Import include
 from rest_framework.routers import DefaultRouter  # ✅ Import DefaultRouter
 from .views import BookList, BookViewSet  # ✅ Import both views
+from rest_framework.authtoken.views import obtain_auth_token 
 
 # ✅ Create a router and register BookViewSet
 router = DefaultRouter()
