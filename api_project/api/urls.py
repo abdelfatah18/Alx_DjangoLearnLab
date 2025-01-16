@@ -12,4 +12,5 @@ urlpatterns = [
     
     # ✅ Include the router-generated URLs
     path('', include(router.urls)),  # This automatically maps CRUD routes
+    path('api-token-auth/', obtain_auth_token, name='api-token-auth'),
 ]
