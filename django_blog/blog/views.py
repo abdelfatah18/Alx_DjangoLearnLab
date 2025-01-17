@@ -1,3 +1,20 @@
-from django.shortcuts import render
+# blog/views.py
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import AuthenticationForm
 
-# Create your views here.
+# Register view to handle user registration
+class RegistrationView(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, 'registration/register.html', {'form': form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+        return render(request, 'registration/register.html', {'form': form})
+
+# You can use the built-in LoginView and LogoutView for login and logout functionality.
