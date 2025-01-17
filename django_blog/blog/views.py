@@ -18,6 +18,7 @@ class RegistrationView(View):
             return redirect('login')
         return render(request, 'registration/register.html', {'form': form})
 
+# Profile view to handle user profile viewing and editing
 @login_required
 def profile_view(request):
     if request.method == 'POST':
@@ -26,3 +27,5 @@ def profile_view(request):
         user.save()
         return redirect('profile')
     return render(request, 'registration/profile.html', {'user': request.user})
+
+# Other existing views can remain here or be added as needed
