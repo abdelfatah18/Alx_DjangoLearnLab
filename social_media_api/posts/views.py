@@ -3,32 +3,39 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Post, Like
 from notifications.models import Notification
+from rest_framework import generics, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 
-@login_required
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
 def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if Like.objects.filter(post=post, user=request.user).exists():
-        return JsonResponse({'message': 'You have already liked this post.'}, status=400)
-    Like.objects.create(post=post, user=request.user)
-    Notification.objects.create(
-        recipient=post.user,
-        actor=request.user,
-        verb="liked your post",
-        target=post
-    )
-    return JsonResponse({'message': 'Post liked successfully.'}, status=200)
+    post = generics.get_object_or_404(Post, pk=pk)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if created:
+        Notification.objects.create(
+            recipient=post.user,
+            actor=request.user,
+            verb="liked your post",
+            target=post
+        )
+        return Response({'message': 'Post liked successfully.'}, status=200)
+    else:
+        return Response({'message': 'You have already liked this post.'}, status=400)
 
-@login_required
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
 def unlike_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = generics.get_object_or_404(Post, pk=pk)
     like = Like.objects.filter(post=post, user=request.user)
-    if not like.exists():
-        return JsonResponse({'message': 'You have not liked this post.'}, status=400)
-    like.delete()
-    Notification.objects.create(
-        recipient=post.user,
-        actor=request.user,
-        verb="unliked your post",
-        target=post
-    )
-    return JsonResponse({'message': 'Post unliked successfully.'}, status=200)
+    if like.exists():
+        like.delete()
+        Notification.objects.create(
+            recipient=post.user,
+            actor=request.user,
+            verb="unliked your post",
+            target=post
+        )
+        return Response({'message': 'Post unliked successfully.'}, status=200)
+    else:
+        return Response({'message': 'You have not liked this post.'}, status=400)
