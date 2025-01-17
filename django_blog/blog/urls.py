@@ -1,6 +1,6 @@
 # blog/urls.py
 from django.urls import path
-from .views import RegistrationView, profile_view
+from .views import RegistrationView
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
