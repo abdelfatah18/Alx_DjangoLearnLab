@@ -18,3 +18,15 @@ class RegistrationView(View):
         return render(request, 'registration/register.html', {'form': form})
 
 # You can use the built-in LoginView and LogoutView for login and logout functionality.
+
+# blog/views.py
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        user = request.user
+        user.email = request.POST['email']
+        user.save()
+        return redirect('profile')
+    return render(request, 'registration/profile.html', {'user': request.user})
