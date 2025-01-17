@@ -1,46 +1,18 @@
-from rest_framework import generics, permissions
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book
 from .serializers import BookSerializer
-from rest_framework import generics, permissions, filters
-from django_filters.rest_framework import DjangoFilterBackend
-r
 
-# عرض قائمة الكتب (عام للجميع)
-class BookListView(generics.ListAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-
-# عرض تفاصيل كتاب واحد (عام للجميع)
-class BookDetailView(generics.RetrieveAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-
-# إنشاء كتاب (للمستخدمين المسجلين فقط)
-class BookCreateView(generics.CreateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
-
-# تحديث كتاب (للمستخدمين المسجلين فقط)
-class BookUpdateView(generics.UpdateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
-
-# حذف كتاب (للمستخدمين المسجلين فقط)
-class BookDeleteView(generics.DestroyAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
-
-
-
-# عرض قائمة الكتب (عام للجميع)
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+    # Filtering by title, author (via author name), and publication_year
     filterset_fields = ['title', 'author__name', 'publication_year']
+
+    # Search functionality for title and author name
     search_fields = ['title', 'author__name']
+
+    # Ordering by title and publication_year
     ordering_fields = ['title', 'publication_year']
