@@ -1,0 +1,58 @@
+/* styles.css */
+
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Centering the form */
+form {
+    width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styles */
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Button styles */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Link styles */
+a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Add margin to the form fields */
+form p {
+    margin-bottom: 15px;
+}
