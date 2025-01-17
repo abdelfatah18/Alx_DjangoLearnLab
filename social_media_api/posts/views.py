@@ -1,22 +1,20 @@
 # posts/views.py
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from django.contrib.auth.decorators import login_required
 from .models import Post, Like
 from notifications.models import Notification
-from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 
-@api_view(['POST'])
+@login_required
 def like_post(request, pk):
-    if not request.user.is_authenticated:
-        return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
-
     post = get_object_or_404(Post, pk=pk)
+    # Check if the user has already liked the post
     if Like.objects.filter(post=post, user=request.user).exists():
-        return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-
-    like = Like.objects.create(post=post, user=request.user)
+        return JsonResponse({'message': 'You have already liked this post.'}, status=400)
+    
+    # Create the like
+    Like.objects.create(post=post, user=request.user)
 
     # Create notification
     Notification.objects.create(
@@ -26,18 +24,25 @@ def like_post(request, pk):
         target=post
     )
 
-    return Response({"detail": "Post liked successfully."}, status=status.HTTP_200_OK)
+    return JsonResponse({'message': 'Post liked successfully.'}, status=200)
 
-@api_view(['POST'])
+@login_required
 def unlike_post(request, pk):
-    if not request.user.is_authenticated:
-        return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
-
     post = get_object_or_404(Post, pk=pk)
-    like = Like.objects.filter(post=post, user=request.user).first()
-    if not like:
-        return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+    like = Like.objects.filter(post=post, user=request.user)
+    
+    if not like.exists():
+        return JsonResponse({'message': 'You have not liked this post.'}, status=400)
 
+    # Delete the like
     like.delete()
 
-    return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
+    # Create notification for unliking (optional, depending on your use case)
+    Notification.objects.create(
+        recipient=post.user,
+        actor=request.user,
+        verb="unliked your post",
+        target=post
+    )
+
+    return JsonResponse({'message': 'Post unliked successfully.'}, status=200)
