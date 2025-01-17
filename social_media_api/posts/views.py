@@ -1,40 +1,51 @@
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from rest_framework import permissions
-from .models import Post, Like, Notification
-from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view, permission_classes
+from .models import Post, Like
+from notifications.models import Notification
 
-# Like a post
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
 def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-
-    # Check if the user has already liked the post
-    like, created = Like.objects.get_or_create(user=request.user, post=post)
-
-    # Create a notification for the post like
-    if created:
-        Notification.objects.create(user=request.user, post=post, action='liked')
-
-    return JsonResponse({'message': 'Post liked successfully!'})
-
-# Unlike a post
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def unlike_post(request, pk):
+    # تأكد من أن المستخدم مسجل دخول
+    if not request.user.is_authenticated:
+        return Response({"detail": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    # استرجاع الـ post
     post = get_object_or_404(Post, pk=pk)
     
-    try:
-        # Attempt to retrieve and delete the like
-        like = Like.objects.get(user=request.user, post=post)
-        like.delete()
+    # تحقق إذا كان المستخدم قد قام بإعجاب نفس المنشور بالفعل
+    if Like.objects.filter(user=request.user, post=post).exists():
+        return Response({"detail": "You have already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create a notification for unliking the post
-        Notification.objects.create(user=request.user, post=post, action='unliked')
+    # إنشاء الإعجاب
+    Like.objects.create(user=request.user, post=post)
+    
+    # إنشاء إشعار للمستخدم صاحب المنشور
+    Notification.objects.create(
+        recipient=post.author,  # الشخص الذي نشر المنشور
+        actor=request.user,     # الشخص الذي قام بالإعجاب
+        verb="liked your post", # وصف الحدث
+        target=post            # الهدف هو المنشور
+    )
+    
+    return Response({"detail": "Post liked successfully"}, status=status.HTTP_201_CREATED)
 
-    except Like.DoesNotExist:
-        return JsonResponse({'message': 'You have not liked this post.'}, status=400)
+@api_view(['POST'])
+def unlike_post(request, pk):
+    # تأكد من أن المستخدم مسجل دخول
+    if not request.user.is_authenticated:
+        return Response({"detail": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    # استرجاع الـ post
+    post = get_object_or_404(Post, pk=pk)
 
-    return JsonResponse({'message': 'Post unliked successfully!'})
+    # تحقق إذا كان المستخدم قد قام بإعجاب المنشور بالفعل
+    like = Like.objects.filter(user=request.user, post=post)
+    if not like.exists():
+        return Response({"detail": "You haven't liked this post yet"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # إزالة الإعجاب
+    like.delete()
+    
+    return Response({"detail": "Post unliked successfully"}, status=status.HTTP_200_OK)
