@@ -53,4 +53,17 @@ class BookAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Book.objects.count(), 1)
 
+## Running Unit Tests for Django REST Framework API
+
+### Prerequisites
+Ensure you have:
+- Django installed (`pip install django`)
+- Django REST Framework installed (`pip install djangorestframework`)
+
+### Running Tests
+To run the tests, execute the following command:
+```bash
+python manage.py test api
+
+
 
