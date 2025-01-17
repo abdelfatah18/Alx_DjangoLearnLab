@@ -1,4 +1,8 @@
 <!-- blog/templates/registration/login.html -->
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -6,16 +10,12 @@
 </form>
 
 <!-- blog/templates/registration/register.html -->
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Register</button>
-</form>
-
-<!-- blog/templates/registration/profile.html -->
-<form method="post">
-    {% csrf_token %}
-    <label for="email">Email</label>
-    <input type="email" name="email" value="{{ user.email }}">
-    <button type="submit">Update</button>
 </form>
