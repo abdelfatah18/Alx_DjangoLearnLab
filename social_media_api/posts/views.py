@@ -1,56 +1,32 @@
-from rest_framework import status, permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from posts.models import Post, Like
-from notifications.models import Notification
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from .models import Post, Like
+from django.contrib.auth.decorators import login_required
 
-class LikePostView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+# Like a post
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
 
-    def post(self, request, pk):
-        post = Post.objects.get(id=pk)
-        if Like.objects.filter(user=request.user, post=post).exists():
-            return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+    # You can add a notification for liking a post here if needed
+    if created:
+        # Logic to create a notification for the user who liked the post
+        pass
 
-        # Create Like
-        Like.objects.create(user=request.user, post=post)
+    return JsonResponse({'message': 'Post liked successfully!'})
 
-        # Create Notification
-        Notification.objects.create(
-            recipient=post.author,
-            actor=request.user,
-            verb="liked your post",
-            target_content_type=ContentType.objects.get_for_model(post),
-            target_object_id=post.id
-        )
-
-        return Response({"detail": "Post liked successfully."}, status=status.HTTP_200_OK)
-
-class UnlikePostView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, pk):
-        post = Post.objects.get(id=pk)
-        like = Like.objects.filter(user=request.user, post=post)
-        if not like.exists():
-            return Response({"detail": "You haven't liked this post yet."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Delete Like
+# Unlike a post
+@login_required
+def unlike_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    try:
+        like = Like.objects.get(user=request.user, post=post)
         like.delete()
 
-        return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
+        # Logic to create a notification for unliking the post
+        pass
+    except Like.DoesNotExist:
+        return JsonResponse({'message': 'You have not liked this post.'}, status=400)
 
-class MarkNotificationReadView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, notification_id):
-        notification = Notification.objects.get(id=notification_id)
-        if notification.recipient != request.user:
-            return Response({"detail": "You can't mark this notification as read."}, status=status.HTTP_400_BAD_REQUEST)
-
-        notification.is_read = True
-        notification.save()
-
-        return Response({"detail": "Notification marked as read."}, status=status.HTTP_200_OK)
+    return JsonResponse({'message': 'Post unliked successfully!'})
