@@ -1,11 +1,11 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Post, Like
-from notifications.models import Notification
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from .models import Post, Like
+from notifications.models import Notification
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
