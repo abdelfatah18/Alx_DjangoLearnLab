@@ -1,62 +1,30 @@
 # blog/views.py
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
-from django.views import View
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-# Register view to handle user registration
-class RegistrationView(View):
-    def get(self, request):
-        form = UserCreationForm()
-        return render(request, 'registration/register.html', {'form': form})
-
-    def post(self, request):
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-        return render(request, 'registration/register.html', {'form': form})
-
-@login_required
-def profile_view(request):
-    if request.method == 'POST':
-        user = request.user
-        user.email = request.POST['email']
-        user.save()
-        return redirect('profile')
-    return render(request, 'registration/profile.html', {'user': request.user})
-
-
-
-
-
-# List all posts
+# List all posts (no restriction on authentication)
 class PostListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
 
-# View a single post
+# View a single post (no restriction on authentication)
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
 
-# Create a new post
+# Create a new post (only authenticated users)
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user  # Set author to the current logged-in user
+        form.instance.author = self.request.user  # Set the author to the logged-in user
         return super().form_valid(form)
 
-# Update an existing post
+# Update an existing post (only the author can edit)
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
@@ -68,9 +36,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author  # Ensure only the author can edit the post
+        return self.request.user == post.author  # Only allow the post's author to edit it
 
-# Delete a post
+# Delete a post (only the author can delete)
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'blog/post_confirm_delete.html'
@@ -78,4 +46,4 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author  # Ensure only the author can delete the post
+        return self.request.user == post.author  # Only allow the post's author to delete it
