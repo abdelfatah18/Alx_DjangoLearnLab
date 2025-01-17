@@ -1,5 +1,7 @@
 from django import forms
 from .models import Comment
+from .models import Post, Tag
+from taggit.forms import TagField  # If using django-taggit
 
 
 class CommentForm(forms.ModelForm):
@@ -25,3 +27,12 @@ class CommentForm(forms.ModelForm):
         if len(content) < 10:
             raise forms.ValidationError("Comment must be at least 10 characters long.")
         return content
+
+
+
+class PostForm(forms.ModelForm):
+    tags = TagField()  # Allows adding tags using django-taggit
+
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
