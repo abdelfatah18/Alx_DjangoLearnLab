@@ -80,3 +80,9 @@ def post_search(request):
         posts = Post.objects.all()
 
     return render(request, 'blog/post_search.html', {'posts': posts, 'query': query})
+
+
+def posts_by_tag(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    posts = tag.posts.all()
+    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
