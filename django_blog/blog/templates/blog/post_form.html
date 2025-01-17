@@ -1,0 +1,7 @@
+<!-- templates/blog/post_form.html -->
+<h2>New Post</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
