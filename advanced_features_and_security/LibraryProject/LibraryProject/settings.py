@@ -17,8 +17,26 @@ SECRET_KEY = 'django-insecure-6+pyob*rk5on95d^__=xby8mn$*-zj0khixtbf29wa#obj*wxl
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-dd8sl(pvgb6!d0#g(!mm+u99#&#6#9hrx$l)ai)geur(ttm=kp'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # Ensure this is set to False for production
+
+# Allowed Hosts - define your domain(s) or server IP here
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
+
+# Browser security headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'  # Prevents clickjacking
+
+# Cookies over HTTPS only
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# HSTS (HTTP Strict Transport Security) - optional but recommended for HTTPS
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 ALLOWED_HOSTS = []
 
@@ -45,6 +63,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+MIDDLEWARE += ['csp.middleware.CSPMiddleware']
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", 'cdnjs.cloudflare.com')  # Example: allow CDN
+CSP_STYLE_SRC = ("'self'", 'fonts.googleapis.com')
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
