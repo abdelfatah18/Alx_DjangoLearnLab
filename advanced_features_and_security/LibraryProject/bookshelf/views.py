@@ -21,3 +21,16 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     # Your logic for deleting a book
     pass
+
+from django.shortcuts import render
+from .forms import ExampleForm
+
+def example_form_view(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            pass
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/form_example.html', {'form': form})
