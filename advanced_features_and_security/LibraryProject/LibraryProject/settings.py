@@ -24,6 +24,20 @@ DEBUG = False  # Ensure this is set to False for production
 # Allowed Hosts - define your domain(s) or server IP here
 ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
 
+# Cookies should only be sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Protect against clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# Prevent browsers from MIME-sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser-based XSS filtering
+SECURE_BROWSER_XSS_FILTER = True
+
+
 # Browser security headers
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
