@@ -10,6 +10,10 @@ AUTH_USER_MODEL = 'bookshelf.CustomUser'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+# Tell Django how to determine if the request is secure (HTTPS)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-6+pyob*rk5on95d^__=xby8mn$*-zj0khixtbf29wa#obj*wxl'
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
