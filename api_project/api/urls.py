@@ -1,8 +1,11 @@
-from rest_framework.authtoken.views import obtain_auth_token  # ✅ Import obtain_auth_token
-from django.urls import path
+
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import BookViewSet  # adjust if path differs
+
+router = DefaultRouter()
+router.register(r'books', BookViewSet, basename='book')
 
 urlpatterns = [
-    # Route to obtain the token
-    path('api-token-auth/', obtain_auth_token, name='api-token-auth'),  # ✅ Token retrieval endpoint
-    ...
+    path('', include(router.urls)),
 ]
