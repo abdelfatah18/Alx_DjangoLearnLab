@@ -2,6 +2,8 @@ from rest_framework import generics, permissions
 from .models import Book
 from .serializers import BookSerializer
 from datetime import datetime
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+
 
 # ✅ List all books (Public)
 class BookListView(generics.ListAPIView):
