@@ -1,60 +1,42 @@
 from rest_framework import generics, permissions
 from .models import Book
 from .serializers import BookSerializer
-from rest_framework import generics, permissions
-from .models import Book
-from .serializers import BookSerializer
 from datetime import datetime
 
-# List all books (Read)
+# ✅ List all books (Public)
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]
 
-# Retrieve one book (Read)
+# ✅ Retrieve one book (Public)
 class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]
 
-# Create a new book (Create)
-class BookCreateView(generics.CreateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Auth required
-
-# Update a book (Update)
-class BookUpdateView(generics.UpdateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Auth required
-
-# Delete a book (Delete)
-class BookDeleteView(generics.DestroyAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Auth required
-
-
-
-
-# ✅ Create View
+# ✅ Create a new book (Authenticated users only)
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Example: link the book to the user who created it
-        serializer.save(created_by=self.request.user)  # لازم يكون فيه created_by في الموديل
+        # You must have a 'created_by' field in your Book model
+        serializer.save(created_by=self.request.user)
 
-# ✅ Update View
+# ✅ Update a book (Authenticated users only)
 class BookUpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_update(self, serializer):
-        serializer.save(updated_at=datetime.now())  # لازم يكون عندك updated_at في الموديل
+        # You must have an 'updated_at' field in your Book model
+        serializer.save(updated_at=datetime.now())
 
+# ✅ Delete a book (Authenticated users only)
+class BookDeleteView(generics.DestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
