@@ -2,13 +2,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Existing URLs
-    path('posts/<int:pk>/', views.post_detail, name='post-detail'),
-    # Add other URLs for creating, updating, and deleting posts
-     path('posts/<int:post_id>/comments/new/', views.comment_create, name='comment_create'),
-    # URL for viewing posts by tag
-    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='posts-by-tag'),
+    # Create a new comment for a specific post
+    path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment_create'),
 
-    # URL for handling search functionality
-    path('search/', views.search_posts, name='search-posts'),
+    # Update an existing comment
+    path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment_update'),
+
+    # Delete an existing comment
+    path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
 ]
