@@ -5,7 +5,7 @@ urlpatterns = [
     # Existing URLs
     path('posts/<int:pk>/', views.post_detail, name='post-detail'),
     # Add other URLs for creating, updating, and deleting posts
-
+    path('posts/<int:post_id>/comments/new/', CommentCreateView.as_view(), name='comment_create'),
     # URL for viewing posts by tag
     path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='posts-by-tag'),
 
