@@ -1,12 +1,7 @@
-# blog/forms.py
 from django import forms
-from .models import Post
-from taggit.forms import TagField, TagWidget  # Import TagField and TagWidget
-from django.forms import widgets  # Import widgets
+from .models import Comment
 
-class PostForm(forms.ModelForm):
-    tags = TagField(widget=TagWidget())  # Using TagWidget for tags
-
+class CommentForm(forms.ModelForm):
     class Meta:
-        model = Post
-        fields = ['title', 'content', 'tags']
+        model = Comment
+        fields = ['author', 'content']  # or whatever your fields are
