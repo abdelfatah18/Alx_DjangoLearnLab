@@ -19,6 +19,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
 
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='posts_by_tag'),
+
     path('', PostListView.as_view(), name='post_list'),
     path('post/new/', PostCreateView.as_view(), name='post_create'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
