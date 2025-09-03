@@ -1,6 +1,9 @@
 from django.db import models
 from django.conf import settings
 
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
 class Post(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts"
@@ -26,3 +29,13 @@ class Comment(models.Model):
     def __str__(self):
         return f"Comment by {self.author} on {self.post}"
 
+
+
+class CustomUser(AbstractUser):
+    bio = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to="profiles/", blank=True, null=True)
+    
+    # Users that this user follows
+    following = models.ManyToManyField(
+        "self", symmetrical=False, related_name="followers", blank=True
+    )
